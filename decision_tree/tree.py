@@ -15,19 +15,23 @@ class Tree:
         self.depth = 0
 
     def build(self, features, target, criterion='gini'):
+        self.n_samples = features.shape[0] # サンプルサイズ
+
         # 全データが同一クラスの場合は終了
         if len(np.unique(target)) == 1:
             self.label = target[0]
             return
 
-        self.n_samples = features.shape[0] # サンプルサイズ
         best_gain = 0.0
         best_feature = None
         best_threshold = None
 
-        # サンプル中に最も多いクラスを設定
-        self.label= max([(c, len(target[target==c])) for c in np.unique(target)],
-            key=lambda x:x[1])[0]
+        # 分類木: サンプル中に最も多いクラス, 回帰木: サンプル中の平均
+        if criterion in {'gini', 'entropy', 'error'}:
+            self.label = max([(c, len(target[target==c])) for c in np.unique(target)],
+                key=lambda x:x[1])[0]
+        else:
+            self.label = np.mean(target)
 
         # ノードの不純度
         impurity_node = self._calc_impurity(criterion, target)
@@ -58,7 +62,7 @@ class Tree:
         self.feature = best_feature
         self.gain = best_gain
         self.threshold = best_threshold
-        self._divide_tree(features,target, criterion)
+        self._divide_tree(features, target, criterion)
 
     def _divide_tree(self, features, target, criterion):
         features_l = features[features[:, self.feature] <= self.threshold]
@@ -84,6 +88,8 @@ class Tree:
             return self._entropy(target, c, s)
         elif criterion == 'error':
             return self._error(target, c, s)
+        elif criterion == 'mse':
+            return self._mse(target)
         else:
             return self._gini(target, c, s)
 
@@ -106,6 +112,11 @@ class Tree:
     # 分類誤差
     def _error(self, target, n_classes, n_samples):
         return 1.0 - max([len(target[target==c]) / n_samples for c in n_classes])
+
+    # 平均二乗誤差
+    def _mse(self, target):
+        y_hat = np.mean(target)
+        return np.mean((target - y_hat) ** 2.0)
 
     # 決定木の剪定
     def prune(self, method, max_depth, min_criterion, n_samples):
@@ -146,4 +157,4 @@ class Tree:
             self.left.show_tree(depth+1, 'then ')
             self.right.show_tree(depth+1, 'else ')
         else: # Leaf
-            print(base + '{class: ' + str(self.label) + ', samples: ' + str(self.n_samples) + '}')
+            print(base + '{value: ' + str(self.label) + ', samples: ' + str(self.n_samples) + '}')
