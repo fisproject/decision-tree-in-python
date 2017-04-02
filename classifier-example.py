@@ -8,7 +8,7 @@ sys.path.append(os.path.join('./decision-tree/'))
 import decision_tree as dt
 from sklearn.datasets import load_iris
 
-if __name__ == '__main__':
+def main():
     d = load_iris()
 
     tree = dt.DecisionTreeClassifier(criterion='entropy', prune='depth', max_depth=3)
@@ -17,3 +17,6 @@ if __name__ == '__main__':
 
     pred = tree.predict(d.data[100:101])
     print(pred, d.target[100:101])
+
+if __name__ == '__main__':
+    main()

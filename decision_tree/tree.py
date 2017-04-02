@@ -3,7 +3,7 @@
 
 import numpy as np
 
-class Tree:
+class Tree(object):
     def __init__(self):
         self.feature = None
         self.label = None
@@ -14,7 +14,10 @@ class Tree:
         self.threshold = None
         self.depth = 0
 
-    def build(self, features, target, criterion='gini'):
+    def build(self, features, target, criterion=None):
+        if criterion is None:
+            criterion = 'gini'
+
         self.n_samples = features.shape[0] # サンプルサイズ
 
         # 全データが同一クラスの場合は終了

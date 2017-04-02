@@ -8,7 +8,7 @@ sys.path.append(os.path.join('./decision-tree/'))
 import decision_tree as dt
 import numpy as np
 
-if __name__ == '__main__':
+def main():
     # Create a random dataset
     rng = np.random.RandomState(1)
     X = np.sort(5 * rng.rand(80, 1), axis=0)
@@ -22,3 +22,6 @@ if __name__ == '__main__':
 
     pred = tree.predict(np.sort(5 * rng.rand(1, 1), axis=0))
     print(pred)
+
+if __name__ == '__main__':
+    main()

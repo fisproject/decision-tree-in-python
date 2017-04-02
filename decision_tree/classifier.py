@@ -4,7 +4,7 @@
 import numpy as np
 from .tree import Tree
 
-class DecisionTreeClassifier:
+class DecisionTreeClassifier(object):
     def __init__(self, criterion='gini', prune='depth', max_depth=3, min_criterion=0.05):
         self.root = None
         self.criterion = criterion
