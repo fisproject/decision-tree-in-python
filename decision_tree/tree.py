@@ -99,7 +99,7 @@ class Tree(object):
     # ジニ不純度
     def _gini(self, target, n_classes, n_samples):
         gini_index = 1.0
-        gini_index -= sum([(len(target[target==c]) / n_samples) ** 2.0 for c in n_classes])
+        gini_index -= sum([(float(len(target[target==c])) / float(n_samples)) ** 2.0 for c in n_classes])
         return gini_index
 
     # エントロピー
