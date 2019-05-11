@@ -16,7 +16,7 @@ def main():
     y[::5] += 3 * (0.5 - rng.rand(16))
 
     # Fit regression model
-    tree = dt.DecisionTreeRegressor(criterion='mse', prune='depth', max_depth=2)
+    tree = dt.DecisionTreeRegressor(criterion='mse', pre_pruning=False, pruning_method='depth', max_depth=2)
     tree.fit(X, y)
     tree.show_tree()
 

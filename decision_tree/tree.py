@@ -4,7 +4,7 @@
 import numpy as np
 
 class Tree(object):
-    def __init__(self):
+    def __init__(self, pre_pruning=False, max_depth=6):
         self.feature = None
         self.label = None
         self.n_samples = None
@@ -12,6 +12,8 @@ class Tree(object):
         self.left = None
         self.right = None
         self.threshold = None
+        self.pre_pruning = pre_pruning
+        self.max_depth = max_depth
         self.depth = 0
 
     def build(self, features, target, criterion='gini'):
@@ -61,18 +63,21 @@ class Tree(object):
         self.feature = best_feature
         self.gain = best_gain
         self.threshold = best_threshold
-        self._divide_tree(features, target, criterion)
+        if self.pre_pruning is False or self.depth < self.max_depth:
+            self._divide_tree(features, target, criterion)
+        else:
+            self.feature = None
 
     def _divide_tree(self, features, target, criterion):
         features_l = features[features[:, self.feature] <= self.threshold]
         target_l = target[features[:, self.feature] <= self.threshold]
-        self.left = Tree()
+        self.left = Tree(self.pre_pruning, self.max_depth)
         self.left.depth = self.depth + 1
         self.left.build(features_l, target_l, criterion)
 
         features_r = features[features[:, self.feature] > self.threshold]
         target_r = target[features[:, self.feature] > self.threshold]
-        self.right = Tree()
+        self.right = Tree(self.pre_pruning, self.max_depth)
         self.right.depth = self.depth + 1
         self.right.build(features_r, target_r, criterion)
 
@@ -112,7 +117,7 @@ class Tree(object):
         y_hat = np.mean(target)
         return np.square(target - y_hat).mean()
 
-    # 決定木の剪定
+    # 決定木の事後剪定
     def prune(self, method, max_depth, min_criterion, n_samples):
         if self.feature is None:
             return

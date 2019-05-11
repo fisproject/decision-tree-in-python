@@ -11,7 +11,7 @@ from sklearn.datasets import load_iris
 def main():
     d = load_iris()
 
-    tree = dt.DecisionTreeClassifier(criterion='entropy', prune='depth', max_depth=3)
+    tree = dt.DecisionTreeClassifier(criterion='entropy', pre_pruning=False, pruning_method='depth', max_depth=3)
     tree.fit(d.data[0:150], d.target[0:150])
     tree.show_tree()
 
