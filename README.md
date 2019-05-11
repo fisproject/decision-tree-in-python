@@ -5,7 +5,8 @@ decision-tree-in-python
 Example of Decision Tree Classifier and Regressor in Python.
 
 ## Usage
-Classification tree
+
+* Classification tree
 
 ```bash
 $ python classifier-example.py
@@ -20,7 +21,7 @@ $ python classifier-example.py
             else {value: 2, samples: 43}
 ```
 
-Regression tree
+* Regression tree
 
 ```bash
 $ python regressor-example.py
@@ -37,4 +38,4 @@ $ python regressor-example.py
 [MIT](http://opensource.org/licenses/MIT)
 
 ## Author
-[ttsy](https://github.com/fisproject)
+[t2sy](https://github.com/fisproject)
