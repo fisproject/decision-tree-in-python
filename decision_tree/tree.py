@@ -128,7 +128,7 @@ class Tree(object):
         pruning = False
 
         # 剪定判定
-        if method == 'impurity' and self.left.feature == None and self.right.feature == None: # Leaf
+        if method == 'impurity' and self.left.feature is None and self.right.feature is None: # Leaf
             if (self.gain * float(self.n_samples) / n_samples) < min_criterion:
                 pruning = True
         elif method == 'depth' and self.depth >= max_depth:
