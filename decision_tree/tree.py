@@ -30,8 +30,7 @@ class Tree(object):
 
         # 分類木: サンプル中に最も多いクラス, 回帰木: サンプル中の平均
         if criterion in {'gini', 'entropy', 'error'}:
-            self.label = max([(c, len(target[target==c])) for c in np.unique(target)],
-                key=lambda x:x[1])[0]
+            self.label = max(target, key=lambda c: len(target[target==c]))
         else:
             self.label = np.mean(target)
 
@@ -46,11 +45,11 @@ class Tree(object):
             for threshold in thresholds:
                 target_l = target[features[:,col] <= threshold]
                 impurity_l = self._calc_impurity(criterion, target_l)
-                n_l = float(target_l.shape[0]) / self.n_samples
+                n_l = target_l.shape[0] / self.n_samples
 
                 target_r = target[features[:,col] > threshold]
                 impurity_r = self._calc_impurity(criterion, target_r)
-                n_r = float(target_r.shape[0]) / self.n_samples
+                n_r = target_r.shape[0] / self.n_samples
 
                 # 情報利得 (information gain): IG = node - (left + right)
                 ig = impurity_node - (n_l * impurity_l + n_r * impurity_r)
@@ -83,8 +82,8 @@ class Tree(object):
 
 
     def _calc_impurity(self, criterion, target):
-        c = np.unique(target) # クラス数
-        s = target.shape[0] # サンプルサイズ
+        c = np.unique(target)
+        s = target.shape[0]
 
         if criterion == 'gini':
             return self._gini(target, c, s)
@@ -97,21 +96,21 @@ class Tree(object):
         else:
             return self._gini(target, c, s)
 
-    def _gini(self, target, n_classes, n_samples):
+    def _gini(self, target, classes, n_samples):
         gini_index = 1.0
-        gini_index -= sum([(float(len(target[target==c])) / float(n_samples)) ** 2.0 for c in n_classes])
+        gini_index -= sum([(len(target[target==c]) / n_samples) ** 2.0 for c in classes])
         return gini_index
 
-    def _entropy(self, target, n_classes, n_samples):
+    def _entropy(self, target, classes, n_samples):
         entropy = 0.0
-        for c in n_classes:
-            p = float(len(target[target==c])) / n_samples
+        for c in classes:
+            p = len(target[target==c]) / n_samples
             if p > 0.0:
                 entropy -= p * np.log2(p)
         return entropy
 
-    def _classification_error(self, target, n_classes, n_samples):
-        return 1.0 - max([len(target[target==c]) / n_samples for c in n_classes])
+    def _classification_error(self, target, classes, n_samples):
+        return 1.0 - max([len(target[target==c]) / n_samples for c in classes])
 
     def _mse(self, target):
         y_hat = np.mean(target)
@@ -129,7 +128,7 @@ class Tree(object):
 
         # 剪定判定
         if method == 'impurity' and self.left.feature is None and self.right.feature is None: # Leaf
-            if (self.gain * float(self.n_samples) / n_samples) < min_criterion:
+            if (self.gain * self.n_samples / n_samples) < min_criterion:
                 pruning = True
         elif method == 'depth' and self.depth >= max_depth:
             pruning = True
