@@ -1,4 +1,3 @@
-#!/bin/python
 # -*- coding: utf-8 -*-
 
 import sys
@@ -8,6 +7,7 @@ sys.path.append(os.path.join('./decision-tree/'))
 import decision_tree as dt
 import numpy as np
 
+
 def main():
     # Create a random dataset
     rng = np.random.RandomState(1)
@@ -16,12 +16,18 @@ def main():
     y[::5] += 3 * (0.5 - rng.rand(16))
 
     # Fit regression model
-    tree = dt.DecisionTreeRegressor(criterion='mse', pre_pruning=False, pruning_method='depth', max_depth=2)
+    tree = dt.DecisionTreeRegressor(
+                criterion='mse',
+                pre_pruning=False,
+                pruning_method='depth',
+                max_depth=2
+           )
     tree.fit(X, y)
     tree.show_tree()
 
     pred = tree.predict(np.sort(5 * rng.rand(1, 1), axis=0))
     print(pred)
+
 
 if __name__ == '__main__':
     main()
