@@ -4,7 +4,7 @@ import numpy as np
 
 
 class Tree(object):
-    def __init__(self, pre_pruning=False, max_depth=6):
+    def __init__(self, pre_pruning: bool = False, max_depth: int = 6):
         self.feature = None
         self.label = None
         self.n_samples = None
@@ -16,7 +16,9 @@ class Tree(object):
         self.max_depth = max_depth
         self.depth = 0
 
-    def build(self, features, target, criterion='gini'):
+    def build(
+        self, features: np.ndarray, target: np.ndarray, criterion: str = "gini"
+    ) -> None:
         self.n_samples = features.shape[0]
 
         # 全データが同一クラスの場合は終了
@@ -29,7 +31,7 @@ class Tree(object):
         best_threshold = None
 
         # 分類木: サンプル中に最も多いクラス, 回帰木: サンプル中の平均
-        if criterion in {'gini', 'entropy', 'error'}:
+        if criterion in {"gini", "entropy", "error"}:
             self.label = max(target, key=lambda c: len(target[target == c]))
         else:
             self.label = np.mean(target)
@@ -67,7 +69,9 @@ class Tree(object):
         else:
             self.feature = None
 
-    def _divide_tree(self, features, target, criterion):
+    def _divide_tree(
+        self, features: np.ndarray, target: np.ndarray, criterion: str
+    ) -> None:
         features_l = features[features[:, self.feature] <= self.threshold]
         target_l = target[features[:, self.feature] <= self.threshold]
         self.left = Tree(self.pre_pruning, self.max_depth)
@@ -80,25 +84,25 @@ class Tree(object):
         self.right.depth = self.depth + 1
         self.right.build(features_r, target_r, criterion)
 
-    def _calc_impurity(self, criterion, target):
+    def _calc_impurity(self, criterion: str, target: np.ndarray) -> float:
         classes = np.unique(target)
 
-        if criterion == 'gini':
+        if criterion == "gini":
             return self._gini(target, classes)
-        elif criterion == 'entropy':
+        elif criterion == "entropy":
             return self._entropy(target, classes)
-        elif criterion == 'error':
+        elif criterion == "error":
             return self._classification_error(target, classes)
-        elif criterion == 'mse':
+        elif criterion == "mse":
             return self._mse(target)
         else:
             return self._gini(target, classes)
 
-    def _gini(self, target, classes):
+    def _gini(self, target: np.ndarray, classes: np.ndarray) -> float:
         n = target.shape[0]
         return 1.0 - sum([(len(target[target == c]) / n) ** 2 for c in classes])
 
-    def _entropy(self, target, classes):
+    def _entropy(self, target: np.ndarray, classes: np.ndarray) -> float:
         n = target.shape[0]
         entropy = 0.0
         for c in classes:
@@ -107,16 +111,18 @@ class Tree(object):
                 entropy -= p * np.log2(p)
         return entropy
 
-    def _classification_error(self, target, classes):
+    def _classification_error(self, target: np.ndarray, classes: np.ndarray) -> float:
         n = target.shape[0]
         return 1.0 - max([len(target[target == c]) / n for c in classes])
 
-    def _mse(self, target):
+    def _mse(self, target: np.ndarray) -> np.float64:
         y_hat = np.mean(target)
         return np.square(target - y_hat).mean()
 
     # 決定木の事後剪定
-    def prune(self, method, max_depth, min_criterion, n_samples):
+    def prune(
+        self, method: str, max_depth: int, min_criterion: float, n_samples: int
+    ) -> None:
         if self.feature is None:
             return
 
@@ -126,10 +132,14 @@ class Tree(object):
         pruning = False
 
         # 剪定判定
-        if method == 'impurity' and self.left.feature is None and self.right.feature is None:
+        if (
+            method == "impurity"
+            and self.left.feature is None
+            and self.right.feature is None
+        ):
             if (self.gain * self.n_samples / n_samples) < min_criterion:
                 pruning = True
-        elif method == 'depth' and self.depth >= max_depth:
+        elif method == "depth" and self.depth >= max_depth:
             pruning = True
 
         # 剪定により過学習を抑制
@@ -138,7 +148,7 @@ class Tree(object):
             self.right = None
             self.feature = None
 
-    def predict(self, d):
+    def predict(self, d: np.ndarray) -> np.float64:
         if self.feature is None:
             return self.label
         else:
@@ -147,13 +157,20 @@ class Tree(object):
             else:
                 return self.right.predict(d)
 
-    def show_tree(self, depth, cond):
-        base = '    ' * depth + cond
+    def show_tree(self, depth: int, condition: str = "") -> None:
+        base = "    " * depth + condition
         # Leaf
         if self.feature is None:
-            print(base + '{value: ' + str(self.label) + ', samples: ' + str(self.n_samples) + '}')
+            print(
+                base
+                + "{value: "
+                + str(self.label)
+                + ", samples: "
+                + str(self.n_samples)
+                + "}"
+            )
         else:
             # Node
-            print(base + 'if X[' + str(self.feature) + '] <= ' + str(self.threshold))
-            self.left.show_tree(depth+1, 'then ')
-            self.right.show_tree(depth+1, 'else ')
+            print(base + "if X[" + str(self.feature) + "] <= " + str(self.threshold))
+            self.left.show_tree(depth + 1, condition="then ")
+            self.right.show_tree(depth + 1, condition="else ")

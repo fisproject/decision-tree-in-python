@@ -5,8 +5,14 @@ from .tree import Tree
 
 
 class DecisionTreeRegressor(object):
-    def __init__(self, criterion='mse', pre_pruning=False,
-                 pruning_method='depth', max_depth=3, min_criterion=0.05):
+    def __init__(
+        self,
+        criterion: str = "mse",
+        pre_pruning: bool = False,
+        pruning_method: str = "depth",
+        max_depth: int = 3,
+        min_criterion: float = 0.05,
+    ):
         self.root = None
         self.criterion = criterion
         self.pre_pruning = pre_pruning
@@ -14,7 +20,7 @@ class DecisionTreeRegressor(object):
         self.max_depth = max_depth
         self.min_criterion = min_criterion
 
-    def fit(self, features, target):
+    def fit(self, features: np.ndarray, target: np.ndarray) -> None:
         self.root = Tree(self.pre_pruning, self.max_depth)
         self.root.build(features, target, self.criterion)
         # post-pruning
@@ -23,11 +29,11 @@ class DecisionTreeRegressor(object):
                 self.pruning_method,
                 self.max_depth,
                 self.min_criterion,
-                self.root.n_samples
+                self.root.n_samples,
             )
 
-    def predict(self, features):
+    def predict(self, features: np.ndarray) -> np.ndarray:
         return np.array([self.root.predict(f) for f in features])
 
-    def show_tree(self):
-        self.root.show_tree(0, ' ')
+    def show_tree(self) -> None:
+        self.root.show_tree(0)
