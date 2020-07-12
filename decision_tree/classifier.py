@@ -13,7 +13,7 @@ class DecisionTreeClassifier(object):
         max_depth: int = 3,
         min_criterion: float = 0.05,
     ):
-        self.root = None
+        self.root: Tree
         self.criterion = criterion
         self.pre_pruning = pre_pruning
         self.pruning_method = pruning_method

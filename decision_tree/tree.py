@@ -1,20 +1,22 @@
 # -*- coding: utf-8 -*-
 
+from typing import Union
+
 import numpy as np
 
 
 class Tree(object):
     def __init__(self, pre_pruning: bool = False, max_depth: int = 6):
-        self.feature = None
-        self.label = None
-        self.n_samples = None
-        self.gain = None
-        self.left = None
-        self.right = None
-        self.threshold = None
+        self.feature: Union[int, None] = None
+        self.label: float
+        self.n_samples: int
+        self.gain: float
+        self.left: Union[Tree, None]
+        self.right: Union[Tree, None]
+        self.threshold: float
         self.pre_pruning = pre_pruning
         self.max_depth = max_depth
-        self.depth = 0
+        self.depth: int = 0
 
     def build(
         self, features: np.ndarray, target: np.ndarray, criterion: str = "gini"
