@@ -1,27 +1,19 @@
-name: Code Quality
+name: flake8 Lint
 
-on:
-  push:
-    paths:
-      - "**.py"
+on: [push, pull_request]
 
 jobs:
-  lint:
-    name: Python Lint
+  flake8-lint:
     runs-on: ubuntu-latest
+    name: Lint
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - name: Check out source repository
+        uses: actions/checkout@v3
+      - name: Set up Python environment
+        uses: actions/setup-python@v4
         with:
-          python-version: "3.9"
-      - name: Run flake8
-        uses: julianwachholz/flake8-action@v2
+          python-version: "3.7"
+      - name: flake8 Lint
+        uses: py-actions/flake8@v2
         with:
-          checkName: "Python Lint"
-          path:
-            - decision_tree/tree.py
-            - decision_tree/classifier.py
-            - decision_tree/regressor.py
-          plugins: flake8-spellcheck
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: decision_tree/
