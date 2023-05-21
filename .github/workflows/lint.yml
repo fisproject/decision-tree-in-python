@@ -16,5 +16,5 @@ jobs:
       - name: flake8 Lint
         uses: py-actions/flake8@v2
         with:
-          ignore: "E501,F401"
+          ignore: "E501,W503,F401"
           path: "decision_tree"
