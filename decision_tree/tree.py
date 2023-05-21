@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
 
-from typing import Union
+from typing import Optional
 
 import numpy as np
 
 
 class Tree(object):
     def __init__(self, pre_pruning: bool = False, max_depth: int = 6):
-        self.feature: Union[int, None] = None
+        self.feature: Optional[int] = None
         self.label: float
         self.n_samples: int
         self.gain: float
-        self.left: Union[Tree, None]
-        self.right: Union[Tree, None]
+        self.left: Optional[Tree]
+        self.right: Optional[Tree]
         self.threshold: float
         self.pre_pruning = pre_pruning
         self.max_depth = max_depth
@@ -70,6 +70,7 @@ class Tree(object):
             self._divide_tree(features, target, criterion)
         else:
             self.feature = None
+        return
 
     def _divide_tree(
         self, features: np.ndarray, target: np.ndarray, criterion: str
