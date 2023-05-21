@@ -70,6 +70,7 @@ class Tree(object):
             self._divide_tree(features, target, criterion)
         else:
             self.feature = None
+        return
 
     def _divide_tree(
         self, features: np.ndarray, target: np.ndarray, criterion: str
